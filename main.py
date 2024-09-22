@@ -44,6 +44,7 @@ class Net(paddle.nn.Layer):
         self.pad = paddle.nn.Pad2D(padding=[0,1,1,0], mode='constant')
         self.pad2 = paddle.nn.Pad2D(padding=[0,1,0,0], mode='constant')
     def forward(self,x1,x2):
+        #输入两张图片，输出两张图片是否连续的
         x1 = self.conv1(x1)
         x1 = self.pool1(x1)
         x2 = self.pool2(self.conv1(x2))
