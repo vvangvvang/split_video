@@ -2,12 +2,11 @@ import paddle
 import cv2
 import numpy as np
 print(paddle.__version__)  #3.0.0
-
-
-import cv2, os
+import os
 import random
 import shutil
 
+#将视频转换为图片
 def video_to_img(video_path,save_path):
     cap = cv2.VideoCapture(video_path)
     if cap.isOpened():
@@ -35,7 +34,7 @@ def generate_image(filelist):
         shutil.rmtree("/home/aistudio/images")
     #文件列表乱序
     random.shuffle(filelist)
-    for video_path in filelist[:50]:
+    for video_path in filelist[:200]:
         print(video_path)
         print(video_path.split("/")[-2])
         save_path = "/home/aistudio/images/"+video_path.split("/")[-2]+"/"+video_path.split("/")[-1].split(".")[0]+"/"
@@ -135,7 +134,9 @@ model = Net()
 #打印网络结构
 print(model)
 #加载模型参数
-model.set_state_dict(paddle.load("./model_6_2.pdparams"))
+
+model.set_state_dict(paddle.load("./model_46_29.pdparams"))
+
 #分类损失函数
 loss_fn = paddle.nn.BCEWithLogitsLoss()
 #随机梯度下降
@@ -147,7 +148,7 @@ for k in range(8,100):
     data = generate_data_label()
     #顺序打乱数据
     random.shuffle(data)
-    batch_size = 500
+    batch_size = 100
     batch_num = len(data) // batch_size
     for i in range(10, batch_num):
         xx1,xx2, y = [], [], []
@@ -174,6 +175,7 @@ for k in range(8,100):
         loss = loss_fn(out,y)
         if loss.numpy() < min_loss:
             min_loss = loss.numpy()
+        if loss.numpy() < min_loss*1.1:
             paddle.save(model.state_dict(),"./model_"+str(k)+"_"+str(i)+".pdparams")
         if i%2==0:
             print('loss:',loss.numpy())
